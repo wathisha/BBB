@@ -20,7 +20,7 @@ async function runDiagnostic() {
     console.log(` DB_HOST:     ${process.env.DB_HOST || '(not set - using localhost)'}`);
     console.log(` DB_PORT:     ${process.env.DB_PORT || '3306'}`);
     console.log(` DB_USER:     ${process.env.DB_USER || 'root'}`);
-    console.log(` DB_NAME:     ${process.env.DB_NAME || 'science_lms_db'}`);
+    console.log(` DB_NAME:     ${process.env.DB_NAME || 'ics_school_db'}`);
     console.log(` DB_SSL:      ${process.env.DB_SSL || 'false'}`);
     console.log('----------------------------------------------------------------------------');
 

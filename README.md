@@ -1,4 +1,4 @@
-# 🚀 Science with Sheshadi LMS - Cloud MySQL & Multi-User Architecture
+# 🚀 Independent Collective School (ICS) ERP & LMS - Cloud MySQL & Multi-User Architecture
 
 A high-performance, responsive **Learning Management System (LMS)** and **Student Academic Progress Tracker** designed for **Sathsarani Science Academy** (Led by Mrs. Sheshadi Amarasinghe & Wathisha Amarasinghe).
 
@@ -62,14 +62,14 @@ Here are the top reliable **100% Free** Cloud MySQL database services:
 1. Sign up at [https://tidbcloud.com](https://tidbcloud.com) (or [https://aiven.io](https://aiven.io)).
 2. Click **Create Cluster** and select **Serverless (Free Forever)**.
 3. Choose your preferred cloud region (e.g., `AWS / us-east-1` or `Singapore / ap-southeast-1` for low latency to Sri Lanka).
-4. Name your cluster `science-lms-cluster` and click **Create**.
+4. Name your cluster `ics-school-cluster` and click **Create**.
 5. Once created, click **Connect**:
    - Note down:
      - **Host**: e.g., `gateway01.us-east-1.prod.aws.tidbcloud.com`
      - **Port**: e.g., `4000` (or `3306` for standard MySQL)
      - **User**: e.g., `xxxx.root`
      - **Password**: Generate or set a strong password
-     - **Database**: `science_lms_db`
+     - **Database**: `ics_school_db`
 
 ---
 
@@ -90,7 +90,7 @@ Here are the top reliable **100% Free** Cloud MySQL database services:
    DB_PORT=4000
    DB_USER=your_db_username.root
    DB_PASSWORD=your_super_secure_password
-   DB_NAME=science_lms_db
+   DB_NAME=ics_school_db
 
    # SSL must be enabled for cloud MySQL providers
    DB_SSL=true
@@ -151,7 +151,7 @@ You can host the Node.js LMS server 24/7 on free cloud app hosting:
    - `DB_PORT` = `4000` (or `3306`)
    - `DB_USER` = `your_mysql_user`
    - `DB_PASSWORD` = `your_mysql_password`
-   - `DB_NAME` = `science_lms_db`
+   - `DB_NAME` = `ics_school_db`
    - `DB_SSL` = `true`
    - `NODE_ENV` = `production`
 7. Click **Deploy Web Service**.

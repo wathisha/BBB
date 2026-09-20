@@ -20,7 +20,7 @@ async function runMigration() {
     console.log(' Science with Sheshadi LMS - Database Migration to Cloud MySQL');
     console.log('============================================================================');
     console.log(` Target Host: ${process.env.DB_HOST || 'localhost'}`);
-    console.log(` Database:    ${process.env.DB_NAME || 'science_lms_db'}`);
+    console.log(` Database:    ${process.env.DB_NAME || 'ics_school_db'}`);
     console.log(` SSL Mode:    ${process.env.DB_SSL || 'false'}`);
     console.log('----------------------------------------------------------------------------');
 
@@ -28,7 +28,7 @@ async function runMigration() {
         console.log('⏳ Initializing connection and verifying schema...');
         await db.init();
 
-        const dataDir = path.join(__dirname, 'assets', 'data');
+        const dataDir = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(__dirname, 'assets', 'data');
         const usersFile = path.join(dataDir, 'users.json');
         const studentsFile = path.join(dataDir, 'students.json');
         const configFile = path.join(dataDir, 'erp-config.json');

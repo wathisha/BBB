@@ -18,7 +18,7 @@ try {
     // dotenv not installed or .env not loaded, fallback to process.env
 }
 
-const DATA_DIR = path.join(__dirname, 'assets', 'data');
+const DATA_DIR = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(__dirname, 'assets', 'data');
 const STUDENTS_FILE = path.join(DATA_DIR, 'students.json');
 const CONFIG_FILE = path.join(DATA_DIR, 'erp-config.json');
 const USERS_FILE = path.join(DATA_DIR, 'users.json');
@@ -176,16 +176,19 @@ async function init() {
 
     if (DB_TYPE === 'mysql' && mysql) {
         try {
-            const sslOption = process.env.DB_SSL === 'true' || process.env.DB_SSL === '1'
-                ? { rejectUnauthorized: false }
+            const isTiDB = (process.env.DB_HOST && process.env.DB_HOST.includes('tidbcloud.com')) ||
+                           (process.env.MYSQL_URI && process.env.MYSQL_URI.includes('tidbcloud.com'));
+            const sslRequired = process.env.DB_SSL === 'true' || process.env.DB_SSL === '1' || isTiDB;
+            const sslOption = sslRequired
+                ? { minVersion: 'TLSv1.2', rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED === 'true' }
                 : undefined;
 
             let poolConfig = {
                 host: process.env.DB_HOST || 'localhost',
-                port: parseInt(process.env.DB_PORT || '3306', 10),
+                port: parseInt(process.env.DB_PORT || (isTiDB ? '4000' : '3306'), 10),
                 user: process.env.DB_USER || 'root',
                 password: process.env.DB_PASSWORD || '',
-                database: process.env.DB_NAME || 'science_lms_db',
+                database: process.env.DB_NAME || 'ics_school_db',
                 waitForConnections: process.env.DB_WAIT_FOR_CONNECTIONS !== 'false',
                 connectionLimit: parseInt(process.env.DB_CONNECTION_LIMIT || '10', 10),
                 queueLimit: parseInt(process.env.DB_QUEUE_LIMIT || '0', 10),
@@ -328,7 +331,7 @@ async function getStatus() {
                 engine: 'MySQL Cloud Database',
                 connected: true,
                 host: process.env.DB_HOST || 'localhost',
-                database: process.env.DB_NAME || 'science_lms_db',
+                database: process.env.DB_NAME || 'ics_school_db',
                 ssl: process.env.DB_SSL === 'true',
                 stats: {
                     usersCount: users[0].count,
