@@ -1,93 +1,102 @@
 {
   "adminAuth": {
-    "username": "sheshadi",
-    "password": "password123"
+    "username": "ics_admin",
+    "password": "ics2026admin"
   },
   "settings": {
-    "academyName": "Science with Sheshadi",
-    "tagline": "GRADE 6-11 SCIENCE SPECIALIST & ACADEMIC ERP",
-    "motto": "UNDERSTAND TODAY, SUCCEED TOMORROW",
-    "teacherName": "Mrs. Sheshadi Amarasinghe",
-    "teacherTitle": "B.Sc. (Chemistry Special), Grad.Chem (IChem) | Head Science Specialist",
-    "hotlines": "071 781 2092 | 077 161 4260",
-    "teacherPhoto": "assets/images/teacher_banner.png",
+    "academyName": "Independent Collective School (ICS)",
+    "shortName": "ICS",
+    "tagline": "Personalised Education in Sri Lanka for Students Aged 2 to 18 Years",
+    "motto": "Sri Lanka's 1st Modern Democratic School | Preparing Students for an AI-Driven Future",
+    "schoolType": "Democratic & Alternative Cambridge School",
+    "teacherName": "Academic Directorate & Faculty",
+    "teacherTitle": "Independent Collective School Academic Board",
+    "hotlines": "+94 72 633 1533",
+    "email": "info@theicschool.com",
+    "website": "https://theicschool.com/",
+    "address": "Gramodhya Mawatha, Kalalgoda, Pannipitiya / Thalawathugoda, Sri Lanka",
+    "schoolHours": "9:00 AM \u2013 3:00 PM",
+    "teacherPhoto": "assets/images/logo.png",
     "bgImage": "assets/images/lms_background.png",
     "subjectList": [
-      "06 - Science",
-      "07 - Science",
-      "08 - Science",
-      "09 - Science",
-      "10 - Science",
-      "11 - Science"
+      "Early Years (Ages 2\u20135) - Play & Discovery",
+      "Cambridge Primary (Stages 1\u20133) - Foundations",
+      "Cambridge Primary (Stages 4\u20136) - Intermediate",
+      "Cambridge Lower Secondary (Stages 7\u20139)",
+      "Cambridge IGCSE / Upper Secondary (Ages 14\u201316)",
+      "Cambridge Advanced / AS & A Levels (Ages 16\u201318)",
+      "AI-Ready Skills & Future Technologies",
+      "Holistic Learning, Allotments & Animals"
     ],
-    "announcement": "Term 2 Revisions & Master Guidebooks Active | WhatsApp Q&A & Zoom Classroom Live | Call: 071 781 2092",
+    "announcement": "Admissions Open for Ages 2\u201318 | Personalised Cambridge Syllabus | Book a Visit via WhatsApp: +94 72 633 1533",
     "offerings": [
-      "Clear Explanations",
-      "Exam Focused Learning",
-      "Concept Building",
-      "Past Paper Practice",
-      "Live Practical Sessions on Classroom"
+      "Personalised Cambridge Syllabus tailored to every learner",
+      "AI-Ready Skills & future-forward thinking from day one",
+      "Holistic Learning with animals, allotments & hands-on discovery",
+      "Democratic Values where every child has a voice and is heard",
+      "Daily Integrated Mental & Physical Wellbeing",
+      "9:00 AM to 3:00 PM balanced school day"
     ],
     "gradingScale": {
-      "A": 75,
-      "B": 65,
-      "C": 50,
-      "S": 35
+      "Distinction": 80,
+      "Merit": 65,
+      "Pass": 50,
+      "Developing": 35
     }
   },
   "whatsapp": {
     "isLive": true,
-    "teacherWhatsappNumber": "94717812092",
-    "whatsappGroupUrl": "https://chat.whatsapp.com/ScienceWithSheshadi2026",
-    "title": "Grade 06 Science - Live Class WhatsApp Q&A & Support",
-    "grade": "06 - Science",
-    "broadcastText": "Hello students, today's Science Master Guidebook and practical review questions are now published.",
-    "statusText": "LIVE ON WHATSAPP"
+    "teacherWhatsappNumber": "94726331533",
+    "whatsappGroupUrl": "https://wa.me/94726331533",
+    "title": "Independent Collective School - Admissions & Community",
+    "grade": "All Stages (Ages 2\u201318)",
+    "broadcastText": "Welcome to Independent Collective School. Personalised Cambridge education for ages 2 to 18.",
+    "statusText": "WHATSAPP ADMISSIONS LIVE"
   },
   "zoom": {
     "isLive": true,
-    "title": "Grade 06 Science - Live Theory & Practical Zoom Session",
-    "grade": "06 - Science",
-    "meetingUrl": "https://zoom.us/j/9876543210?pwd=SCIENCE2026CLASS",
-    "meetingId": "987 654 3210",
-    "passcode": "SCIENCE2026",
-    "hostName": "Mrs. Sheshadi Amarasinghe",
-    "startTime": "Saturday 8:00 AM - 10:30 AM",
-    "statusText": "LIVE ON ZOOM"
+    "title": "ICS Virtual Open Day & Parent Discovery Session",
+    "grade": "All Stages (Ages 2\u201318)",
+    "meetingUrl": "https://zoom.us/j/7263315330",
+    "meetingId": "726 331 5330",
+    "passcode": "ICS2026",
+    "hostName": "ICS Academic Directorate",
+    "startTime": "Weekdays 9:00 AM - 3:00 PM",
+    "statusText": "CAMPUS ACTIVE"
   },
   "weeklyColumns": [
     {
-      "id": "col_mg1",
-      "key": "master_guide_1",
-      "label": "Guidebook 1",
+      "id": "col_att",
+      "key": "attendance_engagement",
+      "label": "Attendance & Engagement",
       "type": "dropdown",
       "removable": false
     },
     {
-      "id": "col_mg2",
-      "key": "master_guide_2",
-      "label": "Guidebook 2",
+      "id": "col_proj",
+      "key": "project_discovery",
+      "label": "Project & Discovery Work",
       "type": "dropdown",
       "removable": false
     },
     {
-      "id": "col_pp",
-      "key": "past_paper",
-      "label": "Past Paper",
+      "id": "col_ai",
+      "key": "ai_tech_skills",
+      "label": "AI & Tech Competency",
       "type": "dropdown",
       "removable": false
     },
     {
-      "id": "col_pr",
-      "key": "practical",
-      "label": "Practical Rating",
+      "id": "col_wb",
+      "key": "wellbeing_values",
+      "label": "Wellbeing & Social Values",
       "type": "dropdown",
       "removable": false
     },
     {
-      "id": "col_ut",
-      "key": "unit_test",
-      "label": "Unit Test Score",
+      "id": "col_cam",
+      "key": "cambridge_progress",
+      "label": "Cambridge Evaluation (%)",
       "type": "number",
       "removable": false
     }
@@ -95,10 +104,10 @@
   "userRoles": [
     {
       "key": "super_admin",
-      "name": "Super Admin (Head Specialist & Tech Lead)",
-      "badgeColor": "from-amber-500 to-rose-500",
+      "name": "Board of Directors / Principal",
+      "badgeColor": "from-teal-600 to-emerald-700",
       "icon": "fa-crown",
-      "description": "Full and unrestricted access to all student evaluations, user administration, system config, and database engines.",
+      "description": "Full governance, academic curriculum approval, staff assignments, and database administration.",
       "permissions": [
         "manage_users",
         "edit_system_settings",
@@ -112,10 +121,10 @@
     },
     {
       "key": "admin",
-      "name": "Administrator",
-      "badgeColor": "from-indigo-500 to-cyan-500",
+      "name": "Academic Coordinator / Administrator",
+      "badgeColor": "from-sky-600 to-indigo-700",
       "icon": "fa-shield-halved",
-      "description": "Full academic and student management, notices, study files, and view access to user roster.",
+      "description": "Day-to-day academic scheduling, Cambridge stage moderation, student directory, and announcements.",
       "permissions": [
         "manage_students",
         "grade_students",
@@ -125,10 +134,10 @@
     },
     {
       "key": "teacher",
-      "name": "Senior Science Educator",
-      "badgeColor": "from-emerald-500 to-teal-500",
+      "name": "Cambridge Lead Educator",
+      "badgeColor": "from-emerald-600 to-teal-700",
       "icon": "fa-chalkboard-user",
-      "description": "Enter and update student weekly evaluations, unit tests, model paper grades, and access confidential teacher documents.",
+      "description": "Evaluate Cambridge subject progress, mentor student portfolios, and access teacher resources.",
       "permissions": [
         "grade_students",
         "manage_content",
@@ -137,10 +146,10 @@
     },
     {
       "key": "assistant_teacher",
-      "name": "Assistant Teacher / Demonstrator",
+      "name": "Learning Facilitator & Mentor",
       "badgeColor": "from-teal-500 to-cyan-600",
       "icon": "fa-user-pen",
-      "description": "Mark student attendance, weekly practical checks, and guidebooks.",
+      "description": "Support practical projects, allotment & outdoor discovery activities, and attendance.",
       "permissions": [
         "grade_students",
         "manage_content"
@@ -148,20 +157,20 @@
     },
     {
       "key": "staff",
-      "name": "Student Registrar & Data Officer",
-      "badgeColor": "from-purple-500 to-indigo-600",
+      "name": "Admissions & Student Registrar",
+      "badgeColor": "from-amber-500 to-orange-600",
       "icon": "fa-clipboard-user",
-      "description": "Register new students, update contact information, parent WhatsApp numbers, and student directory.",
+      "description": "Register enrolled students (ages 2\u201318), maintain parent contact details, and manage visit bookings.",
       "permissions": [
         "manage_students"
       ]
     },
     {
       "key": "viewer",
-      "name": "Auditor / Viewer",
+      "name": "Parent / Auditor Portal Viewer",
       "badgeColor": "from-slate-500 to-slate-700",
       "icon": "fa-eye",
-      "description": "Read-only access to academic progress and analytics.",
+      "description": "Read-only access to student evaluation reports, Cambridge progress charts, and school calendar.",
       "permissions": []
     }
   ]
