@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * Science with Sheshadi LMS - Cloud-Ready Multi-User Server
+ * Independent Collective School (ICS) ERP - TiDB Cloud (ics-school-cluster)
  * ============================================================================
  * Database Support:
  *  - Cloud MySQL (TiDB Cloud Serverless, Aiven MySQL, Clever Cloud, Railway, AWS RDS)
@@ -16,9 +16,32 @@ const path = require('path');
 const os = require('os');
 const db = require('./db');
 
+// Try loading dotenv if present (with fallback to native .env parsing)
 try {
-    require('dotenv').config();
+    require('dotenv').config({ path: path.join(__dirname, '.env') });
 } catch (e) {}
+try {
+    const envPath = path.join(__dirname, '.env');
+    if (fs.existsSync(envPath)) {
+        const raw = fs.readFileSync(envPath, 'utf8');
+        const lines = raw.split(/\r?\n/);
+        for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed || trimmed.startsWith('#')) continue;
+            const eqIdx = trimmed.indexOf('=');
+            if (eqIdx !== -1) {
+                const key = trimmed.slice(0, eqIdx).trim();
+                let val = trimmed.slice(eqIdx + 1).trim();
+                if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+                    val = val.slice(1, -1);
+                }
+                if (process.env[key] === undefined) {
+                    process.env[key] = val;
+                }
+            }
+        }
+    }
+} catch (err) {}
 
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
@@ -472,7 +495,7 @@ const server = http.createServer(async (req, res) => {
                 if (err.code === 'ENOENT') {
                     fs.readFile(path.join(__dirname, '404.html'), (err404, content404) => {
                         res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
-                        res.end(content404 || '<!DOCTYPE html><html><head><title>404 Not Found</title></head><body><h1>404 Not Found</h1><p>Requested file does not exist on Science LMS Server.</p><a href="/">Back to Home</a></body></html>');
+                        res.end(content404 || '<!DOCTYPE html><html><head><title>404 Not Found</title></head><body><h1>404 Not Found</h1><p>Requested file does not exist on ICS School ERP Server.</p><a href="/">Back to Home</a></body></html>');
                     });
                 } else {
                     res.writeHead(500, { 'Content-Type': 'text/plain' });
@@ -498,7 +521,7 @@ db.init().then(() => {
     server.listen(PORT, HOST, () => {
         const networkIps = getNetworkIps();
         console.log('============================================================================');
-        console.log(' Science with Sheshadi LMS - Cloud-Ready Multi-User Server');
+        console.log(' Independent Collective School (ICS) ERP - TiDB Cloud (ics-school-cluster)');
         console.log('============================================================================');
         console.log(` Status: Server running on port ${PORT}`);
         console.log(` Local Access:        http://localhost:${PORT}`);

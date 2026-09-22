@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * Science with Sheshadi LMS - Universal Database Engine
+ * Independent Collective School (ICS) ERP - TiDB Cloud Database Engine (ics-school-cluster)
  * ============================================================================
  * Supports:
  *  1. Cloud MySQL Database (Aiven, TiDB Cloud Serverless, Clever Cloud, Railway, AWS RDS)
@@ -11,12 +11,32 @@
 const fs = require('fs');
 const path = require('path');
 
-// Try loading dotenv if present
+// Try loading dotenv if present (with fallback to native .env parsing)
 try {
-    require('dotenv').config();
-} catch (e) {
-    // dotenv not installed or .env not loaded, fallback to process.env
-}
+    require('dotenv').config({ path: path.join(__dirname, '.env') });
+} catch (e) {}
+try {
+    const envPath = path.join(__dirname, '.env');
+    if (fs.existsSync(envPath)) {
+        const raw = fs.readFileSync(envPath, 'utf8');
+        const lines = raw.split(/\r?\n/);
+        for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed || trimmed.startsWith('#')) continue;
+            const eqIdx = trimmed.indexOf('=');
+            if (eqIdx !== -1) {
+                const key = trimmed.slice(0, eqIdx).trim();
+                let val = trimmed.slice(eqIdx + 1).trim();
+                if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+                    val = val.slice(1, -1);
+                }
+                if (process.env[key] === undefined) {
+                    process.env[key] = val;
+                }
+            }
+        }
+    }
+} catch (err) {}
 
 const DATA_DIR = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(__dirname, 'assets', 'data');
 const STUDENTS_FILE = path.join(DATA_DIR, 'students.json');
@@ -179,16 +199,37 @@ async function init() {
             const isTiDB = (process.env.DB_HOST && process.env.DB_HOST.includes('tidbcloud.com')) ||
                            (process.env.MYSQL_URI && process.env.MYSQL_URI.includes('tidbcloud.com'));
             const sslRequired = process.env.DB_SSL === 'true' || process.env.DB_SSL === '1' || isTiDB;
-            const sslOption = sslRequired
-                ? { minVersion: 'TLSv1.2', rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED === 'true' }
-                : undefined;
+            let sslOption = undefined;
+            if (sslRequired) {
+                sslOption = { minVersion: 'TLSv1.2' };
+                const caPath = process.env.CA_PATH || process.env.DB_CA;
+                if (caPath && fs.existsSync(caPath)) {
+                    try {
+                        sslOption.ca = fs.readFileSync(caPath);
+                        sslOption.rejectUnauthorized = true;
+                    } catch (e) {
+                        console.warn('⚠️ Could not read CA file at ' + caPath + ': ' + e.message);
+                        sslOption.rejectUnauthorized = false;
+                    }
+                } else if (process.env.DB_SSL_REJECT_UNAUTHORIZED === 'true') {
+                    sslOption.rejectUnauthorized = true;
+                } else {
+                    sslOption.rejectUnauthorized = false;
+                }
+            }
+
+            const targetDb = process.env.DB_NAME || 'ics_school_db';
+            const host = process.env.DB_HOST || 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com';
+            const port = parseInt(process.env.DB_PORT || '4000', 10);
+            const user = process.env.DB_USER || 'm8EeagfP55RQX8G.root';
+            const password = process.env.DB_PASSWORD || 'JYKjieTG8iLqUJve';
 
             let poolConfig = {
-                host: process.env.DB_HOST || 'localhost',
-                port: parseInt(process.env.DB_PORT || (isTiDB ? '4000' : '3306'), 10),
-                user: process.env.DB_USER || 'root',
-                password: process.env.DB_PASSWORD || '',
-                database: process.env.DB_NAME || 'ics_school_db',
+                host,
+                port,
+                user,
+                password,
+                database: targetDb,
                 waitForConnections: process.env.DB_WAIT_FOR_CONNECTIONS !== 'false',
                 connectionLimit: parseInt(process.env.DB_CONNECTION_LIMIT || '10', 10),
                 queueLimit: parseInt(process.env.DB_QUEUE_LIMIT || '0', 10),
@@ -199,15 +240,37 @@ async function init() {
                 poolConfig.ssl = sslOption;
             }
 
+            // Create pool
             if (process.env.MYSQL_URI) {
                 pool = mysql.createPool(process.env.MYSQL_URI);
             } else {
                 pool = mysql.createPool(poolConfig);
             }
 
-            // Test connection
-            const connection = await pool.getConnection();
-            console.log(`✅ [MySQL Engine] Connected successfully to MySQL Database '${poolConfig.database}' at ${poolConfig.host}:${poolConfig.port}`);
+            // Test connection and auto-create target database if not exists
+            let connection;
+            try {
+                connection = await pool.getConnection();
+            } catch (connErr) {
+                if (connErr.code === 'ER_BAD_DB_ERROR' && targetDb && !process.env.MYSQL_URI) {
+                    console.log('ℹ️  [TiDB Cloud] Database `' + targetDb + '` does not exist yet. Creating database automatically on cluster...');
+                    const bootstrapConfig = { ...poolConfig };
+                    delete bootstrapConfig.database;
+                    const tempConn = await mysql.createConnection(bootstrapConfig);
+                    await tempConn.query('CREATE DATABASE IF NOT EXISTS `' + targetDb + '` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;');
+                    await tempConn.end();
+                    console.log('✅ [TiDB Cloud] Database `' + targetDb + '` created successfully.');
+                    
+                    // Recreate pool with newly created database
+                    pool = mysql.createPool(poolConfig);
+                    connection = await pool.getConnection();
+                } else {
+                    throw connErr;
+                }
+            }
+
+            const clusterName = isTiDB ? (process.env.TIDB_CLUSTER_NAME || 'ics-school-cluster') : 'Cloud MySQL';
+            console.log('✅ [' + clusterName + '] Connected successfully to Database `' + poolConfig.database + '` at ' + poolConfig.host + ':' + poolConfig.port);
             
             // Create tables if they do not exist
             await connection.query(CREATE_TABLE_USERS);
@@ -224,7 +287,7 @@ async function init() {
             isInitialized = true;
             return true;
         } catch (err) {
-            console.error('❌ [MySQL Engine Error] Could not connect to MySQL:', err.message);
+            console.error('❌ [MySQL / TiDB Engine Error] Could not connect:', err.message);
             console.warn('⚠️  Falling back to local JSON database storage.');
             pool = null;
         }
@@ -327,12 +390,16 @@ async function getStatus() {
             const [logs] = await pool.query('SELECT COUNT(*) as count FROM activity_logs');
             const [cfg] = await pool.query('SELECT COUNT(*) as count FROM erp_config');
 
+            const isTiDB = (process.env.DB_HOST && process.env.DB_HOST.includes('tidbcloud.com')) ||
+                           (process.env.MYSQL_URI && process.env.MYSQL_URI.includes('tidbcloud.com'));
             return {
-                engine: 'MySQL Cloud Database',
+                engine: isTiDB ? 'TiDB Cloud Serverless (MySQL)' : 'MySQL Cloud Database',
+                cluster: isTiDB ? (process.env.TIDB_CLUSTER_NAME || 'ics-school-cluster') : undefined,
                 connected: true,
-                host: process.env.DB_HOST || 'localhost',
+                host: process.env.DB_HOST || 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com',
+                port: parseInt(process.env.DB_PORT || (isTiDB ? '4000' : '3306'), 10),
                 database: process.env.DB_NAME || 'ics_school_db',
-                ssl: process.env.DB_SSL === 'true',
+                ssl: true,
                 stats: {
                     usersCount: users[0].count,
                     studentsCount: students[0].count,
@@ -358,6 +425,7 @@ async function getStatus() {
         return {
             engine: 'Pure JSON Storage (Local)',
             connected: true,
+            isFallback: true,
             stats: {
                 usersCount: users.length,
                 studentsCount: students.length,
@@ -952,5 +1020,7 @@ module.exports = {
     getLogs,
     addLog,
     exportFullDb,
-    importFullDb
+    importFullDb,
+    getPool: () => pool,
+    isCloudConnected: () => !!pool
 };

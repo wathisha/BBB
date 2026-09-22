@@ -6,8 +6,9 @@ Python Script to Register a New Student and Append to Student_Improvement_Tracke
 import sys, os, json
 import openpyxl
 
-EXCEL_PATH = '/working_dir/student-portal-repo/assets/data/Student_Improvement_Tracker.xlsx'
-JSON_PATH = '/working_dir/student-portal-repo/assets/data/students.json'
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+EXCEL_PATH = os.path.join(SCRIPT_DIR, '../assets/data/Student_Improvement_Tracker.xlsx')
+JSON_PATH = os.path.join(SCRIPT_DIR, '../assets/data/students.json')
 
 def register_student(name, student_id, username, password, grade_class="06 - Science", teacher="Mrs. Sheshadi Sathsarani"):
     # 1. Update JSON
