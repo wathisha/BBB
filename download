@@ -1,18 +1,15 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-.venv/
-env/
-venv/
+PORT=3000
+HOST=0.0.0.0
+NODE_ENV=production
+DB_TYPE=mysql
 
-# Operating System
-.DS_Store
-Thumbs.db
+DB_HOST=gateway01.ap-southeast-1.prod.aws.tidbcloud.com
+DB_PORT=4000
+DB_USER=m8EeagfP55RQX8G.root
+DB_PASSWORD=JYKjieTG8iLqUJve
+DB_NAME=test
+DB_SSL=true
+DB_SSL_REJECT_UNAUTHORIZED=false
 
-# IDEs
-.vscode/
-.idea/
-
-# Local build artifacts
-*.log
+MYSQL_URI=mysql://m8EeagfP55RQX8G.root:JYKjieTG8iLqUJve@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/test?ssl={"minVersion":"TLSv1.2","rejectUnauthorized":false}
+JWT_SECRET=ics_school_cluster_jwt_secret_2026

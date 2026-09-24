@@ -1,5 +1,41 @@
 [
   {
+    "id": "LOG-179014939298136",
+    "timestamp": "2026-09-23 07:43:12",
+    "username": "system",
+    "userFullName": "Teacher / Admin",
+    "role": "Super Admin",
+    "action": "CONFIG_UPDATE",
+    "deviceType": "PC / Desktop (Unknown OS)",
+    "deviceDetail": "",
+    "ip": "127.0.0.1",
+    "details": "Updated global LMS ERP configuration."
+  },
+  {
+    "id": "LOG-17901493928934",
+    "timestamp": "2026-09-23 07:43:12",
+    "username": "system",
+    "userFullName": "Teacher / Admin",
+    "role": "Educator",
+    "action": "STUDENTS_SYNC",
+    "deviceType": "PC / Desktop (Unknown OS)",
+    "deviceDetail": "",
+    "ip": "127.0.0.1",
+    "details": "Synchronized student database with 16 records."
+  },
+  {
+    "id": "LOG-179014825231141",
+    "timestamp": "2026-09-23 07:24:12",
+    "username": "system",
+    "userFullName": "Teacher / Admin",
+    "role": "Educator",
+    "action": "STUDENTS_SYNC",
+    "deviceType": "PC / Desktop (Unknown OS)",
+    "deviceDetail": "",
+    "ip": "127.0.0.1",
+    "details": "Synchronized student database with 14 records."
+  },
+  {
     "id": "LOG-1001",
     "timestamp": "2026-08-21 23:45:10",
     "username": "sheshadi",
@@ -7,7 +43,7 @@
     "role": "Super Admin",
     "action": "USER_LOGIN",
     "deviceType": "PC / Desktop",
-    "deviceDetail": "Windows 11 \u00b7 Chrome 128",
+    "deviceDetail": "Windows 11 · Chrome 128",
     "ip": "192.168.1.10",
     "details": "Logged into Teacher & Admin Management Dashboard"
   },
@@ -19,7 +55,7 @@
     "role": "Super Admin",
     "action": "CONFIG_UPDATE",
     "deviceType": "PC / Desktop",
-    "deviceDetail": "macOS Sequoia \u00b7 Chrome 128",
+    "deviceDetail": "macOS Sequoia · Chrome 128",
     "ip": "192.168.1.15",
     "details": "Updated JSON Database sync endpoints and multi-user privilege matrix"
   },
@@ -31,7 +67,7 @@
     "role": "Senior Teacher",
     "action": "GRADE_UPDATE",
     "deviceType": "Mobile Phone",
-    "deviceDetail": "Android 14 \u00b7 Chrome Mobile",
+    "deviceDetail": "Android 14 · Chrome Mobile",
     "ip": "192.168.1.72",
     "details": "Graded August Week 3 Unit Test marks for Grade 06 Science"
   },
@@ -43,7 +79,7 @@
     "role": "Assistant Teacher",
     "action": "GRADE_UPDATE",
     "deviceType": "Tablet / iPad",
-    "deviceDetail": "Android Tab 13 \u00b7 Chrome",
+    "deviceDetail": "Android Tab 13 · Chrome",
     "ip": "192.168.1.61",
     "details": "Updated practical ratings for 8 students from laboratory session"
   },
@@ -55,7 +91,7 @@
     "role": "Staff / Registrar",
     "action": "STUDENT_REGISTER",
     "deviceType": "Mobile Phone",
-    "deviceDetail": "iPhone 15 \u00b7 Safari Mobile",
+    "deviceDetail": "iPhone 15 · Safari Mobile",
     "ip": "192.168.1.88",
     "details": "Registered new student Dinuka Wickramasinghe (STU-014)"
   }

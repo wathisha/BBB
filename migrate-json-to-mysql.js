@@ -1,6 +1,7 @@
 /**
  * ============================================================================
- * Science with Sheshadi LMS - JSON to TiDB Cloud / MySQL Migration Tool
+ * Independent Collective School (ICS) - TiDB Cloud Migration Tool
+ * Cluster: ics-school-cluster
  * ============================================================================
  * Usage:
  *   node migrate-json-to-mysql.js
@@ -11,44 +12,55 @@ const fs = require('fs');
 const path = require('path');
 const db = require('./db');
 
-// Auto-load environment variables (.env) with dotenv or zero-dependency fallback
+// Auto-load environment variables (.env / .env.example) with zero-dependency fallback
 try {
     require('dotenv').config({ path: path.join(__dirname, '.env') });
 } catch (e) {}
 try {
-    const envPath = path.join(__dirname, '.env');
-    if (fs.existsSync(envPath)) {
-        const raw = fs.readFileSync(envPath, 'utf8');
-        const lines = raw.split(/\r?\n/);
-        for (const line of lines) {
-            const trimmed = line.trim();
-            if (!trimmed || trimmed.startsWith('#')) continue;
-            const eqIdx = trimmed.indexOf('=');
-            if (eqIdx !== -1) {
-                const key = trimmed.slice(0, eqIdx).trim();
-                let val = trimmed.slice(eqIdx + 1).trim();
-                if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
-                    val = val.slice(1, -1);
-                }
-                if (process.env[key] === undefined) {
-                    process.env[key] = val;
+    const candidatePaths = [
+        path.join(__dirname, '.env'),
+        path.resolve(process.cwd(), '.env'),
+        path.join(__dirname, '.env.example'),
+        path.resolve(process.cwd(), '.env.example')
+    ];
+    for (const envPath of candidatePaths) {
+        if (fs.existsSync(envPath)) {
+            const raw = fs.readFileSync(envPath, 'utf8');
+            const lines = raw.split(/\r?\n/);
+            for (const line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed || trimmed.startsWith('#')) continue;
+                const eqIdx = trimmed.indexOf('=');
+                if (eqIdx !== -1) {
+                    const key = trimmed.slice(0, eqIdx).trim();
+                    let val = trimmed.slice(eqIdx + 1).trim();
+                    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+                        val = val.slice(1, -1);
+                    }
+                    if (process.env[key] === undefined) {
+                        process.env[key] = val;
+                    }
                 }
             }
+            break;
         }
     }
 } catch (err) {}
 
 async function runMigration() {
-    const isTiDB = (process.env.DB_HOST && process.env.DB_HOST.includes('tidbcloud.com')) ||
-                   (process.env.MYSQL_URI && process.env.MYSQL_URI.includes('tidbcloud.com'));
+    const host = process.env.DB_HOST || 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com';
+    const port = process.env.DB_PORT || '4000';
+    const user = process.env.DB_USER || 'm8EeagfP55RQX8G.root';
+    const dbName = process.env.DB_NAME || 'ics_school_db';
+    const isTiDB = host.includes('tidbcloud.com') || (process.env.MYSQL_URI && process.env.MYSQL_URI.includes('tidbcloud.com'));
     const clusterName = process.env.TIDB_CLUSTER_NAME || (isTiDB ? 'ics-school-cluster' : 'Custom MySQL');
 
     console.log('============================================================================');
     console.log(` 🚀 Science with Sheshadi LMS - Database Migration to ${isTiDB ? 'TiDB Cloud' : 'Cloud MySQL'}`);
     console.log('============================================================================');
     console.log(` Cluster:      ${clusterName}`);
-    console.log(` Target Host:  ${process.env.DB_HOST || 'localhost'}`);
-    console.log(` Database:     ${process.env.DB_NAME || 'ics_school_db'}`);
+    console.log(` Target Host:  ${host}`);
+    console.log(` Database:     ${dbName}`);
     console.log(` SSL Mode:     ${process.env.DB_SSL || 'true'}`);
     console.log('----------------------------------------------------------------------------');
 

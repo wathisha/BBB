@@ -1,12 +1,7 @@
 /**
  * ============================================================================
- * Independent Collective School (ICS) ERP - TiDB Cloud (ics-school-cluster)
- * ============================================================================
- * Database Support:
- *  - Cloud MySQL (TiDB Cloud Serverless, Aiven MySQL, Clever Cloud, Railway, AWS RDS)
- *  - Pure JSON Fallback Engine (Zero configuration local storage)
- * ============================================================================
- * Usage: node server.js
+ * Independent Collective School (ICS) ERP - Cloud-Ready Multi-User Server
+ * TiDB Cloud Serverless (ics-school-cluster) / MySQL Engine
  * ============================================================================
  */
 
@@ -16,29 +11,37 @@ const path = require('path');
 const os = require('os');
 const db = require('./db');
 
-// Try loading dotenv if present (with fallback to native .env parsing)
+// Auto-load environment variables (.env / .env.example) with zero-dependency fallback
 try {
     require('dotenv').config({ path: path.join(__dirname, '.env') });
 } catch (e) {}
 try {
-    const envPath = path.join(__dirname, '.env');
-    if (fs.existsSync(envPath)) {
-        const raw = fs.readFileSync(envPath, 'utf8');
-        const lines = raw.split(/\r?\n/);
-        for (const line of lines) {
-            const trimmed = line.trim();
-            if (!trimmed || trimmed.startsWith('#')) continue;
-            const eqIdx = trimmed.indexOf('=');
-            if (eqIdx !== -1) {
-                const key = trimmed.slice(0, eqIdx).trim();
-                let val = trimmed.slice(eqIdx + 1).trim();
-                if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
-                    val = val.slice(1, -1);
-                }
-                if (process.env[key] === undefined) {
-                    process.env[key] = val;
+    const candidatePaths = [
+        path.join(__dirname, '.env'),
+        path.resolve(process.cwd(), '.env'),
+        path.join(__dirname, '.env.example'),
+        path.resolve(process.cwd(), '.env.example')
+    ];
+    for (const envPath of candidatePaths) {
+        if (fs.existsSync(envPath)) {
+            const raw = fs.readFileSync(envPath, 'utf8');
+            const lines = raw.split(/\r?\n/);
+            for (const line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed || trimmed.startsWith('#')) continue;
+                const eqIdx = trimmed.indexOf('=');
+                if (eqIdx !== -1) {
+                    const key = trimmed.slice(0, eqIdx).trim();
+                    let val = trimmed.slice(eqIdx + 1).trim();
+                    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+                        val = val.slice(1, -1);
+                    }
+                    if (process.env[key] === undefined) {
+                        process.env[key] = val;
+                    }
                 }
             }
+            break;
         }
     }
 } catch (err) {}

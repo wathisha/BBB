@@ -1,39 +1,44 @@
 /**
  * ============================================================================
- * Independent Collective School (ICS) ERP - TiDB Cloud Database Engine (ics-school-cluster)
- * ============================================================================
- * Supports:
- *  1. Cloud MySQL Database (Aiven, TiDB Cloud Serverless, Clever Cloud, Railway, AWS RDS)
- *  2. Local Pure JSON File Storage Fallback
+ * Independent Collective School (ICS) ERP - Universal Database Engine
+ * Optimized for TiDB Cloud Serverless (ics-school-cluster) & MySQL
  * ============================================================================
  */
 
 const fs = require('fs');
 const path = require('path');
 
-// Try loading dotenv if present (with fallback to native .env parsing)
+// Auto-load environment variables (.env / .env.example) with zero-dependency fallback
 try {
     require('dotenv').config({ path: path.join(__dirname, '.env') });
 } catch (e) {}
 try {
-    const envPath = path.join(__dirname, '.env');
-    if (fs.existsSync(envPath)) {
-        const raw = fs.readFileSync(envPath, 'utf8');
-        const lines = raw.split(/\r?\n/);
-        for (const line of lines) {
-            const trimmed = line.trim();
-            if (!trimmed || trimmed.startsWith('#')) continue;
-            const eqIdx = trimmed.indexOf('=');
-            if (eqIdx !== -1) {
-                const key = trimmed.slice(0, eqIdx).trim();
-                let val = trimmed.slice(eqIdx + 1).trim();
-                if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
-                    val = val.slice(1, -1);
-                }
-                if (process.env[key] === undefined) {
-                    process.env[key] = val;
+    const candidatePaths = [
+        path.join(__dirname, '.env'),
+        path.resolve(process.cwd(), '.env'),
+        path.join(__dirname, '.env.example'),
+        path.resolve(process.cwd(), '.env.example')
+    ];
+    for (const envPath of candidatePaths) {
+        if (fs.existsSync(envPath)) {
+            const raw = fs.readFileSync(envPath, 'utf8');
+            const lines = raw.split(/\r?\n/);
+            for (const line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed || trimmed.startsWith('#')) continue;
+                const eqIdx = trimmed.indexOf('=');
+                if (eqIdx !== -1) {
+                    const key = trimmed.slice(0, eqIdx).trim();
+                    let val = trimmed.slice(eqIdx + 1).trim();
+                    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+                        val = val.slice(1, -1);
+                    }
+                    if (process.env[key] === undefined) {
+                        process.env[key] = val;
+                    }
                 }
             }
+            break;
         }
     }
 } catch (err) {}
@@ -196,9 +201,14 @@ async function init() {
 
     if (DB_TYPE === 'mysql' && mysql) {
         try {
-            const isTiDB = (process.env.DB_HOST && process.env.DB_HOST.includes('tidbcloud.com')) ||
-                           (process.env.MYSQL_URI && process.env.MYSQL_URI.includes('tidbcloud.com'));
-            const sslRequired = process.env.DB_SSL === 'true' || process.env.DB_SSL === '1' || isTiDB;
+            const host = process.env.DB_HOST || 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com';
+            const port = parseInt(process.env.DB_PORT || '4000', 10);
+            const user = process.env.DB_USER || 'm8EeagfP55RQX8G.root';
+            const password = process.env.DB_PASSWORD || 'JYKjieTG8iLqUJve';
+            const targetDb = process.env.DB_NAME || 'ics_school_db';
+            const isTiDB = host.includes('tidbcloud.com') || (process.env.MYSQL_URI && process.env.MYSQL_URI.includes('tidbcloud.com'));
+            const sslRequired = process.env.DB_SSL === 'false' ? false : true;
+
             let sslOption = undefined;
             if (sslRequired) {
                 sslOption = { minVersion: 'TLSv1.2' };
@@ -217,12 +227,6 @@ async function init() {
                     sslOption.rejectUnauthorized = false;
                 }
             }
-
-            const targetDb = process.env.DB_NAME || 'ics_school_db';
-            const host = process.env.DB_HOST || 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com';
-            const port = parseInt(process.env.DB_PORT || '4000', 10);
-            const user = process.env.DB_USER || 'm8EeagfP55RQX8G.root';
-            const password = process.env.DB_PASSWORD || 'JYKjieTG8iLqUJve';
 
             let poolConfig = {
                 host,
@@ -737,10 +741,10 @@ async function saveStudents(studentsArray) {
                     parentWhatsapp,
                     JSON.stringify(s.student_info || {}),
                     JSON.stringify(s.weekly_progress || []),
-                    JSON.stringify(s.monthly_progress || []),
+                    JSON.stringify(s.monthly_progress || {}),
                     JSON.stringify(s.assessments || []),
                     JSON.stringify(s.summary || {}),
-                    JSON.stringify(s.teacher_notes || []),
+                    JSON.stringify(s.teacher_notes || ''),
                     JSON.stringify(s.student_files || []),
                     rawData
                 ]);

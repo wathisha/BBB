@@ -18,7 +18,9 @@
         teacherName: "Mrs. Sheshadi Amarasinghe",
         teacherTitle: "B.Sc. (Chemistry Special), Grad.Chem (IChem) | Head Science Specialist",
         hotlines: "071 781 2092 | 077 161 4260",
-        teacherPhoto: "assets/images/teacher_banner.png",
+        logo: "assets/images/logo.png",
+        teacherPhoto: "assets/images/teacher.png",
+        bannerImage: "assets/images/teacher_banner.png",
         bgImage: "assets/images/lms_background.png",
         theme: "light",
         subjectList: ["06 - Science", "07 - Science", "08 - Science", "09 - Science", "10 - Science", "11 - Science"],
@@ -165,7 +167,7 @@
     const DEFAULT_CLOUD_CONFIG = {
         enabled: true,
         provider: "node_server", // "node_server", "cloud_json", "local_json"
-        cloudJsonStudentsUrl: "https://api.npoint.io/182e3982fc6e4d9dcd58",
+        cloudJsonStudentsUrl: "", // Disabled by default to prevent overwriting local data with stale mock data
         cloudJsonConfigUrl: "",
         nodeServerUrl: "", // Defaults to current host if served via server.js
         lastSynced: ""
@@ -894,7 +896,26 @@
                     const res = await fetch(`${serverBase}/api/students?t=${Date.now()}`);
                     if (res.ok) {
                         const serverStudents = await res.json();
+                        if (!Array.isArray(serverStudents)) return;
+
                         const currentLocal = localStorage.getItem('lms_students');
+                        let localList = currentLocal ? JSON.parse(currentLocal) : [];
+
+                        // Safety check: preserve newly created local students that haven't reached server yet
+                        const serverIds = new Set(serverStudents.map(s => s && s.student_info && s.student_info.student_id));
+                        const missingOnServer = localList.filter(s => s && s.student_info && s.student_info.student_id && !serverIds.has(s.student_info.student_id));
+
+                        if (missingOnServer.length > 0) {
+                            console.log(`[LMS Sync] Merging ${missingOnServer.length} unsynced local student(s) to server...`);
+                            const merged = [...serverStudents, ...missingOnServer];
+                            localStorage.setItem('lms_students', JSON.stringify(merged));
+                            await this.pushToCloud('students', merged);
+                            if (typeof onUpdateCallback === 'function') {
+                                onUpdateCallback('students', merged);
+                            }
+                            return;
+                        }
+
                         const serverStr = JSON.stringify(serverStudents);
                         if (currentLocal !== serverStr) {
                             localStorage.setItem('lms_students', serverStr);
@@ -1275,8 +1296,8 @@
                 } catch (e) {}
             }
 
-            // 3. Cached in LocalStorage
-            if (localStudents && Array.isArray(localStudents) && localStudents.length > 0 && !forceRefresh) {
+            // 3. Cached in LocalStorage (Strictly preserve user created students)
+            if (localStudents && Array.isArray(localStudents) && localStudents.length > 0) {
                 return localStudents;
             }
 
@@ -1530,8 +1551,26 @@
             document.querySelectorAll('.branding-hotlines').forEach(el => { el.textContent = settings.hotlines; });
             document.querySelectorAll('.branding-motto').forEach(el => { el.textContent = settings.motto; });
 
+            if (settings.logo) {
+                document.querySelectorAll('.branding-logo').forEach(el => { 
+                    el.src = settings.logo; 
+                });
+            }
+
             if (settings.teacherPhoto) {
-                document.querySelectorAll('.branding-teacher-photo').forEach(el => { el.src = settings.teacherPhoto; });
+                document.querySelectorAll('.branding-teacher-photo').forEach(el => { 
+                    el.src = settings.teacherPhoto; 
+                });
+            }
+
+            if (settings.bannerImage) {
+                document.querySelectorAll('.branding-banner').forEach(el => {
+                    if (el.tagName === 'IMG') {
+                        el.src = settings.bannerImage;
+                    } else {
+                        el.style.backgroundImage = `url("${settings.bannerImage}")`;
+                    }
+                });
             }
 
             if (settings.bgImage) {
